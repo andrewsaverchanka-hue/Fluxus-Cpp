@@ -1,0 +1,29 @@
+<RCC>
+  <qresource prefix="/">
+    <file alias="logo.png">../../logo.png</file>
+    <file alias="logo_full.png">../../logo_full.png</file>
+    <file alias="assets/icons/broom.svg">../../assets/icons/broom.svg</file>
+    <file alias="assets/icons/calendar.svg">../../assets/icons/calendar.svg</file>
+    <file alias="assets/icons/comment.svg">../../assets/icons/comment.svg</file>
+    <file alias="assets/icons/connect.svg">../../assets/icons/connect.svg</file>
+    <file alias="assets/icons/device.svg">../../assets/icons/device.svg</file>
+    <file alias="assets/icons/disconnect.svg">../../assets/icons/disconnect.svg</file>
+    <file alias="assets/icons/download.svg">../../assets/icons/download.svg</file>
+    <file alias="assets/icons/folder.svg">../../assets/icons/folder.svg</file>
+    <file alias="assets/icons/key.svg">../../assets/icons/key.svg</file>
+    <file alias="assets/icons/parser.svg">../../assets/icons/parser.svg</file>
+    <file alias="assets/icons/plus.svg">../../assets/icons/plus.svg</file>
+    <file alias="assets/icons/refresh.svg">../../assets/icons/refresh.svg</file>
+    <file alias="assets/icons/rocket.svg">../../assets/icons/rocket.svg</file>
+    <file alias="assets/icons/save.svg">../../assets/icons/save.svg</file>
+    <file alias="assets/icons/settings.svg">../../assets/icons/settings.svg</file>
+    <file alias="assets/icons/ssh.svg">../../assets/icons/ssh.svg</file>
+    <file alias="assets/icons/stream.svg">../../assets/icons/stream.svg</file>
+    <file alias="assets/icons/success.svg">../../assets/icons/success.svg</file>
+    <file alias="assets/icons/theme-dark.svg">../../assets/icons/theme-dark.svg</file>
+    <file alias="assets/icons/theme-light.svg">../../assets/icons/theme-light.svg</file>
+    <file alias="assets/icons/trash.svg">../../assets/icons/trash.svg</file>
+    <file alias="assets/icons/update.svg">../../assets/icons/update.svg</file>
+    <file alias="assets/icons/warning.svg">../../assets/icons/warning.svg</file>
+  </qresource>
+</RCC>
