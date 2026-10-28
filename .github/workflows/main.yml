@@ -1,0 +1,52 @@
+name: Windows x64
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt 6
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.0'
+          arch: win64_msvc2022_64
+          modules: qtsvg
+          cache: true
+
+      - name: Install native libraries
+        run: vcpkg install libssh zlib --triplet x64-windows
+
+      - name: Configure
+        shell: cmd
+        run: >-
+          cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+          -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+          -DVCPKG_TARGET_TRIPLET=x64-windows
+
+      - name: Build Release
+        run: cmake --build build --config Release --parallel
+
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
+
+      - name: Collect application
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force package | Out-Null
+          Copy-Item build/Release/Fluxus.exe package/
+          Copy-Item C:/vcpkg/installed/x64-windows/bin/libssh.dll package/
+          Copy-Item C:/vcpkg/installed/x64-windows/bin/zlib1.dll package/
+          & "$env:QT_ROOT_DIR/bin/windeployqt.exe" --release --no-translations --compiler-runtime package/Fluxus.exe
+
+      - name: Upload Windows package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Fluxus-Cpp-Windows-x64
+          path: package/**
