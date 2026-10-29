@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <atomic>
 #include <filesystem>
+#include <mutex>
 #include <sstream>
 #include <thread>
 
