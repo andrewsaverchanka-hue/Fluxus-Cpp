@@ -24,14 +24,19 @@ jobs:
         timeout-minutes: 20
         run: |
           python -m pip install --disable-pip-version-check "setuptools>=70.1.0" "aqtinstall==3.3.0"
-          python -m aqt install-qt windows desktop 6.8.3 win64_msvc2022_64 --outputdir "$env:RUNNER_WORKSPACE/Qt" --modules qtsvg --external 7z --timeout 30
+          if ($LASTEXITCODE -ne 0) { throw "Failed to install aqtinstall" }
+
+          python -m aqt install-qt windows desktop 6.8.3 win64_msvc2022_64 --outputdir "$env:RUNNER_WORKSPACE/Qt" --external 7z --timeout 30
+          if ($LASTEXITCODE -ne 0) { throw "Failed to install Qt" }
+
           $qtRoot = "$env:RUNNER_WORKSPACE/Qt/6.8.3/msvc2022_64"
           if (-not (Test-Path "$qtRoot/bin/qmake.exe")) {
             throw "Qt installation was not found at $qtRoot"
           }
+
           "QT_ROOT_DIR=$qtRoot" | Out-File -FilePath $env:GITHUB_ENV -Append
           "$qtRoot/bin" | Out-File -FilePath $env:GITHUB_PATH -Append
-
+          
       - name: Install native libraries
         run: vcpkg install libssh zlib --triplet x64-windows
 
