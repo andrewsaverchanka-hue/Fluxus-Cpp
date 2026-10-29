@@ -9,8 +9,10 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup Python for Qt installer
         uses: actions/setup-python@v5
@@ -25,6 +27,7 @@ jobs:
           arch: win64_msvc2022_64
           modules: qtsvg
           cache: true
+          setup-python: false
 
       - name: Install native libraries
         run: vcpkg install libssh zlib --triplet x64-windows
