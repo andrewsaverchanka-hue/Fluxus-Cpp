@@ -17,16 +17,16 @@ jobs:
       - name: Setup Python for Qt installer
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: '3.14'
 
       - name: Install Qt 6
         uses: jurplel/install-qt-action@v4
         timeout-minutes: 20
         with:
-          version: '6.8.0'
+          version: '6.8.3'
           arch: win64_msvc2022_64
           modules: qtsvg
-          cache: true
+          cache: false
           setup-python: false
 
       - name: Install native libraries
