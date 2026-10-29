@@ -19,15 +19,18 @@ jobs:
         with:
           python-version: '3.14'
 
-      - name: Install Qt 6
-        uses: jurplel/install-qt-action@v4
+      - name: Install Qt 6 directly
+        shell: pwsh
         timeout-minutes: 20
-        with:
-          version: '6.8.3'
-          arch: win64_msvc2022_64
-          modules: qtsvg
-          cache: false
-          setup-python: false
+        run: |
+          python -m pip install --disable-pip-version-check "setuptools>=70.1.0" "aqtinstall==3.3.0"
+          python -m aqt install-qt windows desktop 6.8.3 win64_msvc2022_64 --outputdir "$env:RUNNER_WORKSPACE/Qt" --modules qtsvg --external 7z --timeout 30
+          $qtRoot = "$env:RUNNER_WORKSPACE/Qt/6.8.3/msvc2022_64"
+          if (-not (Test-Path "$qtRoot/bin/qmake.exe")) {
+            throw "Qt installation was not found at $qtRoot"
+          }
+          "QT_ROOT_DIR=$qtRoot" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "$qtRoot/bin" | Out-File -FilePath $env:GITHUB_PATH -Append
 
       - name: Install native libraries
         run: vcpkg install libssh zlib --triplet x64-windows
@@ -36,6 +39,7 @@ jobs:
         shell: cmd
         run: >-
           cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+          -DCMAKE_PREFIX_PATH=%QT_ROOT_DIR%
           -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
           -DVCPKG_TARGET_TRIPLET=x64-windows
 
@@ -50,8 +54,22 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force package | Out-Null
           Copy-Item build/Release/Fluxus.exe package/
-          Copy-Item C:/vcpkg/installed/x64-windows/bin/libssh.dll package/
-          Copy-Item C:/vcpkg/installed/x64-windows/bin/zlib1.dll package/
+
+          $nativeDllNames = @(
+            "ssh.dll",
+            "libssh.dll",
+            "zlib1.dll",
+            "libcrypto-3-x64.dll",
+            "libssl-3-x64.dll"
+          )
+
+          foreach ($name in $nativeDllNames) {
+            $path = "C:/vcpkg/installed/x64-windows/bin/$name"
+            if (Test-Path $path) {
+              Copy-Item $path package/
+            }
+          }
+
           & "$env:QT_ROOT_DIR/bin/windeployqt.exe" --release --no-translations --compiler-runtime package/Fluxus.exe
 
       - name: Upload Windows package
