@@ -183,7 +183,13 @@ public:
 
     ~LocalTunnel() {
         stopping_ = true;
-        if (listener_ != InvalidSocket) ::shutdown(listener_, SHUT_RDWR);
+                if (listener_ != InvalidSocket) {
+#ifdef _WIN32
+            ::shutdown(listener_, SD_BOTH);
+#else
+            ::shutdown(listener_, SHUT_RDWR);
+#endif
+        }
         closeSocket(listener_);
         listener_ = InvalidSocket;
         if (acceptor_.joinable()) acceptor_.join();
